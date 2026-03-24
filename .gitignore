@@ -1,0 +1,16 @@
+node_modules
+dist
+out
+.DS_Store
+*.log
+coverage
+playwright-report
+test-results
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+release
+release-*
+build
+sample-data
+方案

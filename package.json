@@ -1,0 +1,71 @@
+{
+  "name": "filebro-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Electron desktop app for importing URLs, browsing pages, saving results, and exporting to CSV/TSV.",
+  "type": "module",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "npx electron-vite build",
+    "preview": "electron-vite preview",
+    "dist": "npm run build && set CSC_IDENTITY_AUTO_DISCOVERY=false&& npx electron-builder",
+    "dist:win": "npm run build && set CSC_IDENTITY_AUTO_DISCOVERY=false&& npx electron-builder --win portable --x64",
+    "dist:portable": "npm run build && set CSC_IDENTITY_AUTO_DISCOVERY=false&& npx electron-builder --win portable --x64"
+  },
+  "dependencies": {
+    "playwright": "^1.52.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sql.js": "^1.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "electron": "^35.3.2",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^3.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "build": {
+    "appId": "com.filebro.desktop",
+    "productName": "FileBro Desktop",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "icon": "build/icon.png",
+    "files": [
+      "out/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
+      }
+    ],
+    "asar": true,
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}-${arch}.${ext}"
+    }
+  }
+}
