@@ -1,4 +1,5 @@
 import { app, BrowserView, BrowserWindow, dialog, ipcMain } from 'electron';
+import fs from 'node:fs';
 import path from 'node:path';
 import { AppDatabase, readInputFileUrls } from './services/db';
 import type { AppState, ExportResult, ImportFileResult, PageSnapshot, RuleRecord } from '../shared/types';
@@ -247,6 +248,19 @@ ipcMain.handle('rule:delete', async (_event, ruleId: string) => {
   database.deleteRule(ruleId);
   sendState();
   return true;
+});
+
+ipcMain.handle('dialog:pick-url-txt-file', async (): Promise<string | null> => {
+  const result = await dialog.showSaveDialog(mainWindow ?? undefined, {
+    title: '选择 URL 收集文件',
+    defaultPath: path.join(app.getPath('documents'), 'collected-urls.txt'),
+    filters: [{ name: 'Text File', extensions: ['txt'] }],
+  });
+  return result.canceled ? null : (result.filePath ?? null);
+});
+
+ipcMain.handle('url:append-to-txt', async (_event, input: { filePath: string; url: string }): Promise<void> => {
+  await fs.promises.appendFile(input.filePath, input.url + '\n', 'utf-8');
 });
 
 ipcMain.handle('task:use-latest', async (): Promise<AppState> => {

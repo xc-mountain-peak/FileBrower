@@ -29,6 +29,8 @@ contextBridge.exposeInMainWorld('api', {
   updateRule: (input: UpdateRuleInput) => ipcRenderer.invoke('rule:update', input) as Promise<RuleRecord | null>,
   deleteRule: (ruleId: string) => ipcRenderer.invoke('rule:delete', ruleId) as Promise<boolean>,
   useLatestTask: () => ipcRenderer.invoke('task:use-latest') as Promise<AppState>,
+  pickUrlTxtFile: () => ipcRenderer.invoke('dialog:pick-url-txt-file') as Promise<string | null>,
+  appendUrlToTxt: (filePath: string, url: string) => ipcRenderer.invoke('url:append-to-txt', { filePath, url }) as Promise<void>,
 
   // BrowserView APIs
   bv: {
@@ -67,6 +69,8 @@ declare global {
       updateRule: (input: UpdateRuleInput) => Promise<RuleRecord | null>;
       deleteRule: (ruleId: string) => Promise<boolean>;
       useLatestTask: () => Promise<AppState>;
+      pickUrlTxtFile: () => Promise<string | null>;
+      appendUrlToTxt: (filePath: string, url: string) => Promise<void>;
       bv: {
         setBounds: (bounds: { x: number; y: number; width: number; height: number }) => void;
         loadUrl: (url: string) => void;

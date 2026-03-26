@@ -483,6 +483,58 @@ pre {
   font-size: 0.78rem;
 }
 
+/* ── 顶栏分隔线 ── */
+.topbar-sep {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0 0.1rem;
+}
+
+/* 已选 TXT 文件按钮高亮 */
+.txt-file-set {
+  border-color: rgba(93, 214, 194, 0.35);
+  color: #b7f7ef;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Toast 通知 ── */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  z-index: 9999;
+  pointer-events: none;
+  animation: toast-in 0.2s ease;
+  white-space: nowrap;
+}
+
+.toast-success {
+  background: rgba(101, 214, 159, 0.18);
+  border: 1px solid rgba(101, 214, 159, 0.4);
+  color: #c8ffe0;
+  box-shadow: 0 4px 20px rgba(101, 214, 159, 0.2);
+}
+
+.toast-error {
+  background: rgba(255, 107, 139, 0.18);
+  border: 1px solid rgba(255, 107, 139, 0.4);
+  color: #ffd0db;
+  box-shadow: 0 4px 20px rgba(255, 107, 139, 0.2);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 /* ══════════════════════════════════════
    响应式
    ══════════════════════════════════════ */

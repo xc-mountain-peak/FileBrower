@@ -35,6 +35,8 @@ export default function App() {
     const stored = localStorage.getItem('ui.sidebarCollapsed');
     return stored ? stored === 'true' : true;
   });
+  const [urlTxtPath, setUrlTxtPath] = useState<string | null>(() => localStorage.getItem('ui.urlTxtPath'));
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const frameRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -149,6 +151,19 @@ export default function App() {
     setStatusText(`已创建任务「${task.name}」，共 ${task.totalCount} 条 URL。`);
   }
 
+  function showToast(message: string, type: 'success' | 'error') {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  }
+
+  async function handlePickUrlTxtFile() {
+    const filePath = await window.api.pickUrlTxtFile();
+    if (!filePath) return;
+    setUrlTxtPath(filePath);
+    localStorage.setItem('ui.urlTxtPath', filePath);
+    showToast(`已选择文件：${filePath.split(/[\\/]/).pop()}`, 'success');
+  }
+
   async function handleSaveCurrent() {
     if (!currentItem) {
       return;
@@ -159,6 +174,16 @@ export default function App() {
     const latestState = await window.api.getState();
     setState(latestState);
     setStatusText(`已保存第 ${formatIndex(latestState.task?.currentIndex ?? 0, latestState.task?.totalCount ?? 0)} 条。`);
+
+    // 同步将当前 URL 追加到 txt 文件
+    if (urlTxtPath && currentItem.url) {
+      try {
+        await window.api.appendUrlToTxt(urlTxtPath, currentItem.url);
+        showToast('URL 已保存 ✓', 'success');
+      } catch {
+        showToast('URL 写入文件失败', 'error');
+      }
+    }
   }
 
   async function captureSnapshot(): Promise<PageSnapshot> {
@@ -264,6 +289,14 @@ export default function App() {
           <button className="primary compact-btn" onClick={handleImport}>导入 URL</button>
           <button className="compact-btn" onClick={() => handleExport('csv')}>导出 CSV</button>
           <button className="compact-btn" onClick={() => handleExport('tsv')}>导出 TSV</button>
+          <span className="topbar-sep"></span>
+          <button
+            className={`compact-btn ${urlTxtPath ? 'txt-file-set' : ''}`}
+            onClick={handlePickUrlTxtFile}
+            title={urlTxtPath ?? '未选择导出文件'}
+          >
+            {urlTxtPath ? `📄 ${urlTxtPath.split(/[\\/]/).pop()}` : '📄 选导出 TXT'}
+          </button>
         </div>
         <div className="topbar-right">
           <div className="progress-chip">
@@ -394,6 +427,9 @@ export default function App() {
           </details>
         </aside>
       </main>
+      {toast && (
+        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
     </div>
   );
 }
